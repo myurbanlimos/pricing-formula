@@ -25,3 +25,16 @@ export declare function validateFareInputs(
     fareAt10km: number,
     fareAt200km: number
 ): string[];
+
+/**
+ * TEMPORARY interim shim -- delete once fareAt10km/fareAt200km are real
+ * fields on every live vehicle document. Derives {fareAt10km, fareAt200km}
+ * from a vehicle's old `price` bracket array. Logs a
+ * "[DERIVED_FARE_ANCHORS_IN_USE]" warning every time it's called.
+ *
+ * @throws {Error} if vehicle.price is missing or empty
+ */
+export declare function deriveInterimFareAnchors(vehicle: {
+    carName?: string;
+    price: Array<{ distance: { a: number; b: number }; price: number }>;
+}): { fareAt10km: number; fareAt200km: number };

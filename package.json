@@ -1,6 +1,6 @@
 {
   "name": "myurbanlimos-pricing-formula",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Single source of truth for My Urban Limos vehicle fare calculation. Shared between myurbanlimos_backend and NextMyUrbanLimos via a pinned git dependency — do not copy this logic into either repo.",
   "type": "module",
   "main": "index.js",
