@@ -1,0 +1,28 @@
+{
+  "name": "myurbanlimos-pricing-formula",
+  "version": "1.0.0",
+  "description": "Single source of truth for My Urban Limos vehicle fare calculation. Shared between myurbanlimos_backend and NextMyUrbanLimos via a pinned git dependency — do not copy this logic into either repo.",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myurbanlimos/pricing-formula.git"
+  }
+}
