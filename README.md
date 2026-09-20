@@ -43,7 +43,7 @@ shorthand — the shorthand resolves to an SSH URL, which fails to build
 in environments (e.g. EasyPanel) with no SSH credentials configured:
 
 ```bash
-npm install "myurbanlimos-pricing-formula@git+https://github.com/myurbanlimos/pricing-formula.git#v1.1.0"
+npm install "myurbanlimos-pricing-formula@git+https://github.com/myurbanlimos/pricing-formula.git#v2.0.0"
 ```
 
 ## Usage
@@ -58,30 +58,18 @@ const errors = validateFareInputs(fareAt10km, fareAt200km);
 // -> string[], empty if valid -- use in the admin UI before saving
 ```
 
-### Interim fare-anchor derivation (temporary)
+Every live vehicle document now has real `fareAt10km`/`fareAt200km`
+values, set through the `bookings-myurbanlimos` admin UI. `calculateFare`
+expects real numbers for both and throws a `TypeError` if either is
+missing or not a finite, non-negative number -- callers should read
+`vehicle.fareAt10km`/`vehicle.fareAt200km` directly.
 
-Live vehicle documents in MongoDB don't have real `fareAt10km`/
-`fareAt200km` values yet (the admin UI that sets them hasn't been
-built). Until then, `deriveInterimFareAnchors` derives both anchors
-from a vehicle's old `price` bracket array, replicating the legacy
-bracket-lookup formula exactly at d=10 and d=200:
-
-```js
-import { calculateFare, deriveInterimFareAnchors } from "myurbanlimos-pricing-formula";
-
-const { fareAt10km, fareAt200km } =
-  vehicle.fareAt10km !== undefined && vehicle.fareAt200km !== undefined
-    ? { fareAt10km: vehicle.fareAt10km, fareAt200km: vehicle.fareAt200km }
-    : deriveInterimFareAnchors(vehicle);
-
-const fare = calculateFare(fareAt10km, fareAt200km, distanceKm);
-```
-
-**Delete this function (and every call site in both consuming repos)
-once every live vehicle document has real `fareAt10km`/`fareAt200km`
-values.** It logs a `[DERIVED_FARE_ANCHORS_IN_USE]` warning on every
-call — grep for that string in `myurbanlimos_backend`'s server logs
-and the browser console to confirm it's no longer needed.
+(v1.1.0 briefly had a temporary `deriveInterimFareAnchors` shim for
+deriving these from a vehicle's old `price` bracket array, for the
+period between this package's rollout and the admin UI shipping.
+Removed in v2.0.0 now that every vehicle has real values -- confirmed
+via a live test pass across all 8 vehicles and a clean
+`DERIVED_FARE_ANCHORS_IN_USE` grep on `myurbanlimos_backend`'s logs.)
 
 ## Changing the formula
 

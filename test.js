@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { calculateFare, validateFareInputs, deriveInterimFareAnchors } from "./index.js";
+import { calculateFare, validateFareInputs } from "./index.js";
 
 const F10 = 50;
 const F200 = 300;
@@ -39,27 +39,4 @@ test("validateFareInputs", () => {
         validateFareInputs(NaN, undefined),
         ["fareAt10km must be a positive number", "fareAt200km must be a positive number"]
     );
-});
-
-test("deriveInterimFareAnchors derives anchors from the old bracket tiers", () => {
-    const vehicle = {
-        carName: "Test Sedan",
-        price: [
-            { distance: { a: 1, b: 15.99 }, price: 10.6 },
-            { distance: { a: 1, b: 199.99 }, price: 2.12 },
-            { distance: { a: 1, b: 15000.99 }, price: 2.2 },
-        ],
-    };
-    const { fareAt10km, fareAt200km } = deriveInterimFareAnchors(vehicle);
-    // 10km falls in the first bracket (a:1,b:15.99) -> rate 10.6 * 10
-    assert.equal(fareAt10km, 106);
-    // 200km falls past the last bracket's b:15000.99 boundary check (200 <= 15000.99,
-    // but > 199.99, so the middle bracket doesn't match either) -> falls back to
-    // the last bracket's rate, 2.2 * 200 (floating point: 440.00000000000006)
-    assert.ok(Math.abs(fareAt200km - 440) < 1e-9);
-});
-
-test("deriveInterimFareAnchors throws when the vehicle has no price tiers", () => {
-    assert.throws(() => deriveInterimFareAnchors({ carName: "No Tiers", price: [] }), Error);
-    assert.throws(() => deriveInterimFareAnchors({ carName: "No Tiers" }), Error);
 });
